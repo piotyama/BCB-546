@@ -108,10 +108,17 @@ I am simply matching the chromosome I want to print out using a simple regular e
 	for i in {1..10}; 
 
 	do
-		awk '$3==i {print}' joined_teosinte.txt | sort -k4,4n > teosinte_chrom$i.txt
+		awk '$3=='$i' {print}' joined_teosinte.txt | sort -k4,4n > teosinte_chrom"$i".txt
 	
-		awk '$3==i {print}' joined_teosinte.txt | sort -k4,4nr > teosinte_chrom$i_r-sort.txt
-	done	
+		awk '$3=='$i' {print}' joined_teosinte.txt | sort -k4,4nr > teosinte_chrom"$i"_r-sort.txt;
+	done	.
+	
+**An even better solution as suggested by @mhufford:** This for loop extracts individual chromosomes from each of the joined files, sorts them numerically in both ascending and descending order by SNP position and writes each in separate files.
+Additionally, missing data, previously encoded as '??' is replaced with '- -' .
+
+	for i in {1..10}; do awk '$3=='$i'' joined_teosinte.txt | sed 's/?/-/g'| sort -k4,4n | tee teosinte_chrom$i.txt | sed 's/?/-/g' | sort -k4,4nr > teosinte_chrom"$i"_r-sort.txt; done﻿⁠⁠⁠⁠
+
+	for i in {1..10}; do awk '$3=='$i'' joined_Z_mays.txt | sed 's/?/-/g'| sort -k4,4n | tee Z_mays_chrom$i.txt | sed 's/?/-/g' | sort -k4,4nr > Z_mays_chrom"$i"_r-sort.txt; done﻿⁠⁠⁠⁠
 	
 **Processed files are in their respective directories**
 
