@@ -101,16 +101,16 @@ I am simply matching the chromosome I want to print out using a simple regular e
 
 **Processed files are in their respective directories**
 
-**Using a for loop to extract SNPs based on chromosome id:**
+**Using a for loop to extract SNPs based on chromosome id:** This does a much better job than the repetitive awk code. From command line run **$ bash for_loop.sh**
 
 	#!/bin/bash
 
-	for i in $1..10; 
+	for i in {1..10}; 
 
 	do
-		awk '$3 ~ /i/ {print}' joined_teosinte.txt | sort -k4,4n > teosinte_chrom$i.txt
+		awk '$3==i {print}' joined_teosinte.txt | sort -k4,4n > teosinte_chrom$i.txt
 	
-		awk '$3 ~ /i/ {print}' joined_teosinte.txt | sort -k4,4nr > teosinte_chrom$i_r-sort.txt
+		awk '$3==i {print}' joined_teosinte.txt | sort -k4,4nr > teosinte_chrom$i_r-sort.txt
 	done	
 	
 **Processed files are in their respective directories**
@@ -118,3 +118,4 @@ I am simply matching the chromosome I want to print out using a simple regular e
 	~/Desktop/BCB546_Assignment/Z_mays_chroms
 
 	~/Desktop/BCB546_Assignment/teosinte_chroms
+	
