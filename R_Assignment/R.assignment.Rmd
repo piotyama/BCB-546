@@ -1,0 +1,115 @@
+---
+title: "R.assignment.BCB546X"
+output: html_notebook
+---
+
+#Set working directory
+setwd("/users/Paulotyama/Desktop/BCB546X-Spring2016/R_Assignment")
+                      
+                  #Part I:
+#Data Inspection:
+genotypes <- read.table(file="fang_et_al_genotypes.txt",sep="\t",header=T)
+snps <- read.table(file="snp_position.txt",sep="\t",header=T)
+head(genotypes)
+dim(genotypes)#2782  986
+length(genotypes)#986
+attributes(genotypes)
+class(genotypes)#data.frame
+str(genotypes)#data.frame':	2782 obs. of  986 variables
+dim(snps)# 983  15
+length(snps)#15
+class(snps)#data.frame
+str(snps)#'data.frame':	983 obs. of  15 variables
+
+#Data processing:
+#Aim: create a joined file between genotypes and snps and to process each chromosome in both maize
+  #and Teosinte separately into different .csv files. Create a total of 40 files as with Unix.
+
+#Create separate maize and teosinte files from the genotypes file
+library(dplyr)
+Z_mays <- genotypes[which(genotypes$Group %in% c("ZMMIL", "ZMMMR", "ZMMLR")),]
+head (Z_mays)
+teosinte <- genotypes[which(genotypes$Group %in% c("ZMPBA", "ZMPIL", "ZMPJA")),]
+head(teosinte)
+
+#Transpose and process genotype files for merger
+######
+maize <- Z_mays[-c(1,2,3),]
+transposed_Z_mays <- t(maize)
+Z.mays <- cbind(rownames(transposed_Z_mays),transposed_Z_mays)
+rownames(Z.mays) <- NULL
+colnames(Z.mays) <- Z.mays[1,]
+Z.mays <- as.data.frame(Z.mays)
+colnames(Z.mays)[1] 
+
+
+Teo <-teosinte[c(-1,-2,-3),]
+transposed_teosinte <-t(Teo)
+Teosinte <- cbind(rownames(transposed_teosinte),transposed_teosinte)
+rownames(Teosinte) <- NULL
+colnames(Teosinte) <- Teosinte[1,]
+Teosinte <- as.data.frame(Teosinte)
+colnames(Teosinte)[1]
+
+
+#Process snps file to contain only the necessary info for the merger (ID,Chr,Pos)
+snp_pos <- snps[,c(1,3,4)]
+head(snp_pos)
+snp_pos$Position <- as.numeric(as.character(snp_pos$Position))
+snp_pos$Chromosome <- as.numeric(as.character(snp_pos$Chromosome))#NA's introduced by coercion.
+colnames(snp_pos)[1] <- "Sample_ID"
+
+#merge created files
+joined_Z.mays <- merge(snp_pos,Z.mays, by = "Sample_ID")
+joined_Z.mays[joined_Z.mays == "unknown"] <- NA
+
+joined_teosinte <- merge(snp_pos,Teosinte, by = "Sample_ID")
+joined_teosinte[joined_teosinte == "unknown"] <- NA
+
+#Organize files in ascending and descending order by pos
+acend.Z.mays <- joined_Z.mays[order(joined_Z.mays$Chromosome, joined_Z.mays$Position),]
+descend.Z.mays <- joined_Z.mays[order(joined_Z.mays$Chromosome, -joined_Z.mays$Position),]
+ascend.teosinte <- joined_teosinte [order(joined_teosinte$Chromosome, joined_teosinte$Position),]
+descend.teosinte <- joined_teosinte [order(joined_teosinte$Chromosome, -joined_teosinte$Position),]
+
+#Process the files into separate chromosomes for each in both ascending and descending order
+#Usin loop graciouslu suggested on Slack by mcnellie using temp-def 
+
+#Z_mays
+for(i in 1:10){
+temp_df<-acend.Z.mays[acend.Z.mays[,2]==i,]
+write.csv(temp_df,na="", sep=" ", file= paste("Z_mays_chrom",i,".csv"),row.names=F)
+}
+
+for(i in 1:10){
+temp_df<-descend.Z.mays[descend.Z.mays[,2]==i,]
+write.csv(temp_df,na="", sep=" ", file= paste("z_mays_chrom",i,"_desc.csv"),row.names=F)
+}
+
+#Teosinte.
+for(i in 1:10){
+  temp_df<-ascend.teosinte[ascend.teosinte[,2]==i,]
+  write.csv(temp_df,na="", sep=" ", file= paste("teosinte_chrom",i,".csv"),row.names=F)
+}
+
+for(i in 1:10){
+  temp_df<-descend.teosinte[descend.teosinte[,2]==i,]
+  write.csv(temp_df,na="", sep=" ", file= paste("teosinte_chrom",i,"_desc.csv"),row.names=F)
+}
+
+            #Part II:
+library(ggplot2)
+library(reshape2)
+library(tidyr)
+
+genotypes <- read.table(file="fang_et_al_genotypes.txt",sep="\t",header=T)
+snps <- read.table(file="snp_position.txt",sep="\t",header=T)
+
+#Question 1: Plot total number of SNPs per chromosome.
+melt.snps <- melt(snps, "Chromosome", "SNP_ID")
+ggplot(melt.snps) + geom_bar(aes(x=Chromosome, fill=Chromosome)) + ggtitle("SNPs on each Chromosome") + labs(x="Chromosome",y="SNP Count")
+
+
+
+
+
