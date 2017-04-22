@@ -1,0 +1,58 @@
+---
+title: "Genomic_Ranges_Assignment"
+author: "piotyama"
+date: "April 21, 2017"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+#Genomic Ranges Assignment ;     #Lecture slides 132-139
+setwd("/users/Paulotyama/Desktop/Genomic_ranges_assignment")
+# Install Bioconductor's Primary Packages
+source("http://bioconductor.org/biocLite.R")
+biocLite()
+biocLite("GenomicRanges")
+biocLite("GenomicFeatures")
+library(IRanges)
+library(GenomicRanges)
+
+
+#import a file with variants (SNPs, indels, etc...) from chr1 of Mus musculus
+#File found in the course repository: BCB546X-Spring2016/bds-files/chapter-09-working-with-range-data
+dbsnp137 <- import("mm10_snp137_chr1_trunc.bed.gz")
+
+#create a mouse transcript db using GenomicFeatures
+biocLite("TxDb.Mmusculus.UCSC.mm10.ensGene")
+library(TxDb.Mmusculus.UCSC.mm10.ensGene)
+txdb <- TxDb.Mmusculus.UCSC.mm10.ensGene
+
+#checking the contents of txdb
+genes(txdb)
+transcripts(txdb)
+exons(txdb)
+promoters(txdb)
+
+#collapse all overlapping exons in the mouse TranscriptDb 
+collapsed_exons <- reduce(exons(txdb), ignore.strand=TRUE)
+#create an object with only exons from chr1
+chr1_collapsed_exons <- collapsed_exons[seqnames(collapsed_exons) == "chr1"]
+#inspect our variant file
+summary(width(dbsnp137))
+#adjusting variant width so as to find overlap with exon ranges
+dbsnp137_resized <- dbsnp137
+zw_i <- width(dbsnp137_resized) == 0
+dbsnp137_resized[zw_i] <- resize(dbsnp137_resized[zw_i], width=1)
+#pull out those variants that overlap exons on chromosome 1
+hits <- findOverlaps(dbsnp137_resized, chr1_collapsed_exons,ignore.strand=TRUE)
+#determine the number of variants that are exonic
+length(unique(queryHits(hits)))
+#determine the proportion of variants that are exonic
+length(unique(queryHits(hits)))/length(dbsnp137_resized)
+#determine the number of variants per exon
+var_counts <- countOverlaps(chr1_collapsed_exons, dbsnp137_resized, ignore.strand=TRUE)
+var_counts
+#append this to our GRanges object that includes exons
+chr1_collapsed_exons$num_vars <- var_counts
+#write this into a csv file
+write.table(chr1_collapsed_exons, file="chr1_collapsed_exons.csv", row.names=FALSE,sep=",")

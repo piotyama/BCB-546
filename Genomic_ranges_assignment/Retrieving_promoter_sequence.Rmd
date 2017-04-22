@@ -1,0 +1,97 @@
+---
+title: "Retrieving_Promoter_Regions"
+author: "piotyama"
+date: "April 21, 2017"
+output: html_document
+---
+#Extra points Vince_Buffalo pp. 314-319-Retrieving Promoter Regions:Flanks and Promoters.
+setwd("/users/Paulotyama/Desktop/Genomic_ranges_assignment")
+# Install Bioconductor's Primary Packages
+source("http://bioconductor.org/biocLite.R")
+biocLite()
+#Both packages are needed for handling range data objects and methods for working with ranged data
+biocLite("GenomicRanges")
+biocLite("GenomicFeatures")
+#rtracklayer has functions for importing annotation data and methods for working with such data
+biocLite("rtracklayer")
+#BSgenome contains classes for storing and methods for working with sequence data
+biocLite("BSgenome")
+#This loads the Mus musculus genome that's available in bioconductor
+biocLite("BSgenome.Mmusculus.UCSC.mm10")
+#Call the different libraries
+library(IRanges)
+library(GenomicRanges)
+library(rtracklayer)
+library(BSgenome.Mmusculus.UCSC.mm10)
+library(Biostrings)
+
+#import a file with variants (SNPs, indels, etc...) from chr1 of Mus musculus
+#File found in the course repository: BCB546X-Spring2016/bds-files/chapter-09-working-with-range-data
+#dbsnp137 <- import("mm10_snp137_chr1_trunc.bed.gz")
+
+#Use rtracklayer to import the Mus_musculus.GRCm38.75_chr.gtf.gz
+mm_gtf <-import('Mus_musculus.GRCm38.75_chr1.gtf.gz')
+#Reads in metadata columns
+colnames(mcols(mm_gtf))
+##..
+
+##Retrieving Promoter Regions of all protein coding genes
+#find the subset of all protein coding genes in chr1
+table(mm_gtf$gene_biotype)
+#subset all genes and biotype protein_coding
+chr1_pcg <-mm_gtf[mm_gtf$type=="gene" & mm_gtf$gene_biotype=="protein_coding"]
+#inspect file
+summary(width(chr1_pcg))
+length(chr1_pcg)
+#use flank to grab 3kbp upstream of each feature
+chr1_pcg_3kb_up <- flank(chr1_pcg, width = 3000)
+#Alternatively, we could use the function "promoters()" from GenomicRanges
+chr1_pcg_3kb_up2 <- promoters(chr1_pcg, upstream = 3000, downstream = 0)
+#Let's check if the two methods produce identicle results
+identical(chr1_pcg_3kb_up, chr1_pcg_3kb_up2)#Yes!
+##.......
+
+##Retrieving Promoter Sequence
+#Use accessor functions to extract information from BSgenome packages
+mm_gm <-BSgenome.Mmusculus.UCSC.mm10
+organism(mm_gm)
+providerVersion(mm_gm)
+provider(mm_gm)
+#look at sequence information
+seqinfo(mm_gm)
+mm_gm$chrM
+mm_gm[[22]]
+#We can use string-matching and alignment functions in Biostrings packages to search BSgenome objects
+matchPattern("GGCGCGCC", mm_gm$chr1)
+##..
+
+#We're ready to extract promoter sequences!
+#Remap one chromosome naming scheme to another using both convenience functions and manually
+#check that all sequences are in the BSgenome object
+all(seqlevels(chr1_pcg_3kb_up) %in% seqlevels(mm_gm))#FALSE!
+#Create a test GRange object
+gr <- GRanges(c("chr1", "chr2"), IRanges(start = c(3,4), width = 10))
+#access and set the names and levels of sequences
+seqlevels(gr)
+#change the set sequence levels by providing new level names in the same order as the original seq levels 
+seqlevels(gr) <- c("1", "2")
+seqlevels(gr)
+#Use a convenience  function from Bioconductor to set style from NCBI to UCSC
+seqlevelsStyle(chr1_pcg_3kb_up)
+seqlevelsStyle(mm_gm)
+seqlevelsStyle(chr1_pcg_3kb_up) <- "UCSC"
+#Re-check that all sequences are in the BSgenome object
+all(seqlevels(chr1_pcg_3kb_up) %in% seqlevels(mm_gm))#TRUE!
+##....
+
+#Now we can grab the sequences for particular regions kept in our GRange object
+#use the function getseq() that takes a GRange object and returns sequences for each range
+chr1_3kb_seqs <- getSeq(mm_gm, chr1_pcg_3kb_up)
+chr1_3kb_seqs 
+
+#write these sequences to a FASTA file using another convenience function
+writeXStringSet(chr1_3kb_seqs, file="mm10_chr1_3kb_promoters.fasta", format="fasta")
+
+#####.....END....###
+#Thanks for the bonus exercise!
+
