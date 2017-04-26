@@ -7,52 +7,120 @@ output:
   html_document: default
 ---
 
-#Genomic Ranges Assignment ;     #Lecture slides 132-139
-setwd("/users/Paulotyama/Desktop/Genomic_ranges_assignment")
-# Install Bioconductor's Primary Packages
+###Genomic Ranges Assignment, Lecture slides 132-139.
+
+setwd for all chuncks
+```{r "setup", include=FALSE}
+require("knitr")
+opts_knit$set(root.dir = "/users/Paulotyama/Desktop/Genomic_ranges_assignment")
+```
+
+###Install Bioconductor's Primary Packages
+
+```{r}
 source("http://bioconductor.org/biocLite.R")
-biocLite()
+```
+
+```{r}
 biocLite("GenomicRanges")
+```
+
+```{r}
 biocLite("GenomicFeatures")
+```
+
+```{r}
+biocLite("rtracklayer")
+```
+
+```{r}
 library(IRanges)
+```
+
+```{r}
 library(GenomicRanges)
+```
 
+```{r}
+library(rtracklayer)
 
-#import a file with variants (SNPs, indels, etc...) from chr1 of Mus musculus
-#File found in the course repository: BCB546X-Spring2016/bds-files/chapter-09-working-with-range-data
+```
+import a file with variants (SNPs, indels, etc...) from chr1 of Mus musculus
+File found in the course repository: BCB546X-Spring2016/bds-files/chapter-09-working-with-range-data
+
+```{r}
 dbsnp137 <- import("mm10_snp137_chr1_trunc.bed.gz")
+```
 
-#create a mouse transcript db using GenomicFeatures
+create a mouse transcript db using GenomicFeatures
+
+```{r}
 biocLite("TxDb.Mmusculus.UCSC.mm10.ensGene")
 library(TxDb.Mmusculus.UCSC.mm10.ensGene)
 txdb <- TxDb.Mmusculus.UCSC.mm10.ensGene
+```
 
-#checking the contents of txdb
+checking the contents of txdb
+
+```{r}
 genes(txdb)
 transcripts(txdb)
 exons(txdb)
 promoters(txdb)
+```
 
-#collapse all overlapping exons in the mouse TranscriptDb 
+collapse all overlapping exons in the mouse TranscriptDb 
+
+```{r}
 collapsed_exons <- reduce(exons(txdb), ignore.strand=TRUE)
-#create an object with only exons from chr1
+```
+
+create an object with only exons from chr1
+
+```{r}
 chr1_collapsed_exons <- collapsed_exons[seqnames(collapsed_exons) == "chr1"]
-#inspect our variant file
+```
+
+inspect our variant file
+
+```{r}
 summary(width(dbsnp137))
-#adjusting variant width so as to find overlap with exon ranges
+```
+
+adjusting variant width so as to find overlap with exon ranges
+
+```{r}
 dbsnp137_resized <- dbsnp137
 zw_i <- width(dbsnp137_resized) == 0
 dbsnp137_resized[zw_i] <- resize(dbsnp137_resized[zw_i], width=1)
-#pull out those variants that overlap exons on chromosome 1
+```
+
+pull out those variants that overlap exons on chromosome 1
+
+```{r}
 hits <- findOverlaps(dbsnp137_resized, chr1_collapsed_exons,ignore.strand=TRUE)
-#determine the number of variants that are exonic
+```
+
+determine the number of variants that are exonic
+
+```{r}
 length(unique(queryHits(hits)))
-#determine the proportion of variants that are exonic
+```
+
+determine the proportion of variants that are exonic
+
+```{r}
 length(unique(queryHits(hits)))/length(dbsnp137_resized)
-#determine the number of variants per exon
+```
+determine the number of variants per exon
+```{r}
 var_counts <- countOverlaps(chr1_collapsed_exons, dbsnp137_resized, ignore.strand=TRUE)
-var_counts
-#append this to our GRanges object that includes exons
+```
+append this to our GRanges object that includes exons
+```{r}
 chr1_collapsed_exons$num_vars <- var_counts
-#write this into a csv file
+```
+###write this into a csv file
+```{r}
 write.table(chr1_collapsed_exons, file="chr1_collapsed_exons.csv", row.names=FALSE,sep=",")
+```

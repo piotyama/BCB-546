@@ -124,58 +124,219 @@ $(document).ready(function () {
 </div>
 
 
-<div id="extra-points-vince_buffalo-pp.314-319-retrieving-promoter-regionsflanks-and-promoters." class="section level1">
-<h1>Extra points Vince_Buffalo pp. 314-319-Retrieving Promoter Regions:Flanks and Promoters.</h1>
-<p>setwd(“/users/Paulotyama/Desktop/Genomic_ranges_assignment”) # Install Bioconductor’s Primary Packages source(“<a href="http://bioconductor.org/biocLite.R" class="uri">http://bioconductor.org/biocLite.R</a>”) biocLite() #Both packages are needed for handling range data objects and methods for working with ranged data biocLite(“GenomicRanges”) biocLite(“GenomicFeatures”) #rtracklayer has functions for importing annotation data and methods for working with such data biocLite(“rtracklayer”) #BSgenome contains classes for storing and methods for working with sequence data biocLite(“BSgenome”) #This loads the Mus musculus genome that’s available in bioconductor biocLite(“BSgenome.Mmusculus.UCSC.mm10”) #Call the different libraries library(IRanges) library(GenomicRanges) library(rtracklayer) library(BSgenome.Mmusculus.UCSC.mm10) library(Biostrings)</p>
+<div id="extra-points-vince_buffalo-pp.314-319-retrieving-promoter-regionsflanks-and-promoters." class="section level2">
+<h2>Extra points Vince_Buffalo pp. 314-319-Retrieving Promoter Regions:Flanks and Promoters.</h2>
+<p>setwd for all chuncks</p>
+<div id="install-bioconductors-primary-packages" class="section level3">
+<h3>Install Bioconductor’s Primary Packages</h3>
+<pre class="r"><code>source(&quot;http://bioconductor.org/biocLite.R&quot;)</code></pre>
+<pre><code>## Bioconductor version 3.4 (BiocInstaller 1.24.0), ?biocLite for help</code></pre>
+<pre><code>## A new version of Bioconductor is available after installing the most
+##   recent version of R; see http://bioconductor.org/install</code></pre>
+<p>Both packages are needed for handling range data objects and methods for working with ranged data</p>
+<p>biocLite(“GenomicRanges”) biocLite(“GenomicFeatures”)</p>
+<p>rtracklayer has functions for importing annotation data and methods for working with such data biocLite(“rtracklayer”)</p>
+<p>BSgenome contains classes for storing and methods for working with sequence data</p>
+<pre class="r"><code>biocLite(&quot;BSgenome&quot;)</code></pre>
+<pre><code>## BioC_mirror: https://bioconductor.org</code></pre>
+<pre><code>## Using Bioconductor 3.4 (BiocInstaller 1.24.0), R 3.3.2 (2016-10-31).</code></pre>
+<pre><code>## Installing package(s) 'BSgenome'</code></pre>
+<pre><code>## package 'BSgenome' successfully unpacked and MD5 sums checked
+## 
+## The downloaded binary packages are in
+##  C:\Users\Paulotyama\AppData\Local\Temp\Rtmpyk0aaa\downloaded_packages</code></pre>
+<pre><code>## installation path not writeable, unable to update packages: boot, cluster,
+##   foreign, lattice, MASS, rpart, survival</code></pre>
+<p>This loads the Mus musculus genome that’s available in bioconductor</p>
+<pre class="r"><code>biocLite(&quot;BSgenome.Mmusculus.UCSC.mm10&quot;)</code></pre>
+<pre><code>## BioC_mirror: https://bioconductor.org</code></pre>
+<pre><code>## Using Bioconductor 3.4 (BiocInstaller 1.24.0), R 3.3.2 (2016-10-31).</code></pre>
+<pre><code>## Installing package(s) 'BSgenome.Mmusculus.UCSC.mm10'</code></pre>
+<pre><code>## installing the source package 'BSgenome.Mmusculus.UCSC.mm10'</code></pre>
+<pre><code>## installation path not writeable, unable to update packages: boot, cluster,
+##   foreign, lattice, MASS, rpart, survival</code></pre>
+<p>Call the different libraries</p>
+<pre class="r"><code>library(IRanges)</code></pre>
+<pre><code>## Warning: package 'IRanges' was built under R version 3.3.3</code></pre>
+<pre><code>## Loading required package: BiocGenerics</code></pre>
+<pre><code>## Loading required package: parallel</code></pre>
+<pre><code>## 
+## Attaching package: 'BiocGenerics'</code></pre>
+<pre><code>## The following objects are masked from 'package:parallel':
+## 
+##     clusterApply, clusterApplyLB, clusterCall, clusterEvalQ,
+##     clusterExport, clusterMap, parApply, parCapply, parLapply,
+##     parLapplyLB, parRapply, parSapply, parSapplyLB</code></pre>
+<pre><code>## The following objects are masked from 'package:stats':
+## 
+##     IQR, mad, xtabs</code></pre>
+<pre><code>## The following objects are masked from 'package:base':
+## 
+##     anyDuplicated, append, as.data.frame, cbind, colnames,
+##     do.call, duplicated, eval, evalq, Filter, Find, get, grep,
+##     grepl, intersect, is.unsorted, lapply, lengths, Map, mapply,
+##     match, mget, order, paste, pmax, pmax.int, pmin, pmin.int,
+##     Position, rank, rbind, Reduce, rownames, sapply, setdiff,
+##     sort, table, tapply, union, unique, unsplit, which, which.max,
+##     which.min</code></pre>
+<pre><code>## Loading required package: S4Vectors</code></pre>
+<pre><code>## Warning: package 'S4Vectors' was built under R version 3.3.3</code></pre>
+<pre><code>## Loading required package: stats4</code></pre>
+<pre><code>## 
+## Attaching package: 'S4Vectors'</code></pre>
+<pre><code>## The following objects are masked from 'package:base':
+## 
+##     colMeans, colSums, expand.grid, rowMeans, rowSums</code></pre>
+<pre class="r"><code>library(GenomicRanges)</code></pre>
+<pre><code>## Warning: package 'GenomicRanges' was built under R version 3.3.3</code></pre>
+<pre><code>## Loading required package: GenomeInfoDb</code></pre>
+<pre class="r"><code>library(rtracklayer)
+library(BSgenome.Mmusculus.UCSC.mm10)</code></pre>
+<pre><code>## Loading required package: BSgenome</code></pre>
+<pre><code>## Loading required package: Biostrings</code></pre>
+<pre><code>## Loading required package: XVector</code></pre>
+<pre><code>## Warning: package 'XVector' was built under R version 3.3.3</code></pre>
+<pre class="r"><code>library(Biostrings)</code></pre>
+<p>import a file with variants (SNPs, indels, etc…) from chr1 of Mus musculus File found in the course repository: BCB546X-Spring2016/bds-files/chapter-09-working-with-range-data dbsnp137 &lt;- import(“mm10_snp137_chr1_trunc.bed.gz”)</p>
+<p>Use rtracklayer to import the</p>
+<pre class="r"><code>mm_gtf &lt;-import('Mus_musculus.GRCm38.75_chr1.gtf.gz')</code></pre>
+<p>Reads in metadata columns</p>
+<pre class="r"><code>colnames(mcols(mm_gtf))</code></pre>
+<pre><code>##  [1] &quot;source&quot;            &quot;type&quot;              &quot;score&quot;            
+##  [4] &quot;phase&quot;             &quot;gene_id&quot;           &quot;gene_name&quot;        
+##  [7] &quot;gene_source&quot;       &quot;gene_biotype&quot;      &quot;transcript_id&quot;    
+## [10] &quot;transcript_name&quot;   &quot;transcript_source&quot; &quot;tag&quot;              
+## [13] &quot;exon_number&quot;       &quot;exon_id&quot;           &quot;ccds_id&quot;          
+## [16] &quot;protein_id&quot;</code></pre>
 </div>
-<div id="import-a-file-with-variants-snps-indels-etc-from-chr1-of-mus-musculus" class="section level1">
-<h1>import a file with variants (SNPs, indels, etc…) from chr1 of Mus musculus</h1>
+<div id="retrieving-promoter-regions-of-all-protein-coding-genes" class="section level3">
+<h3>Retrieving Promoter Regions of all protein coding genes</h3>
+<p>find the subset of all protein coding genes in chr1</p>
+<pre class="r"><code>table(mm_gtf$gene_biotype)</code></pre>
+<pre><code>## 
+##              antisense                lincRNA                  miRNA 
+##                    480                    551                    354 
+##               misc_RNA polymorphic_pseudogene   processed_transcript 
+##                     93                     61                    400 
+##         protein_coding             pseudogene                   rRNA 
+##                  77603                    978                     69 
+##         sense_intronic      sense_overlapping                 snoRNA 
+##                     21                      4                    297 
+##                  snRNA 
+##                    315</code></pre>
+<p>subset all genes and biotype protein_coding</p>
+<pre class="r"><code>chr1_pcg &lt;-mm_gtf[mm_gtf$type==&quot;gene&quot; &amp; mm_gtf$gene_biotype==&quot;protein_coding&quot;]</code></pre>
+<p>inspect file</p>
+<pre class="r"><code>summary(width(chr1_pcg))</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##      78    9429   25750   60640   62420 1076000</code></pre>
+<pre class="r"><code>length(chr1_pcg)</code></pre>
+<pre><code>## [1] 1240</code></pre>
+<p>use flank to grab 3kbp upstream of each feature</p>
+<pre class="r"><code>chr1_pcg_3kb_up &lt;- flank(chr1_pcg, width = 3000)</code></pre>
+<p>Alternatively, we could use the function “promoters()” from GenomicRanges</p>
+<pre class="r"><code>chr1_pcg_3kb_up2 &lt;- promoters(chr1_pcg, upstream = 3000, downstream = 0)</code></pre>
+<p>Let’s check if the two methods produce identicle results</p>
+<pre class="r"><code>identical(chr1_pcg_3kb_up, chr1_pcg_3kb_up2)#Yes!</code></pre>
+<pre><code>## [1] TRUE</code></pre>
 </div>
-<div id="file-found-in-the-course-repository-bcb546x-spring2016bds-fileschapter-09-working-with-range-data" class="section level1">
-<h1>File found in the course repository: BCB546X-Spring2016/bds-files/chapter-09-working-with-range-data</h1>
+<div id="retrieving-promoter-sequence" class="section level3">
+<h3>Retrieving Promoter Sequence</h3>
+<p>Use accessor functions to extract information from BSgenome packages</p>
+<pre class="r"><code>mm_gm &lt;-BSgenome.Mmusculus.UCSC.mm10
+organism(mm_gm)</code></pre>
+<pre><code>## [1] &quot;Mus musculus&quot;</code></pre>
+<pre class="r"><code>providerVersion(mm_gm)</code></pre>
+<pre><code>## [1] &quot;mm10&quot;</code></pre>
+<pre class="r"><code>provider(mm_gm)</code></pre>
+<pre><code>## [1] &quot;UCSC&quot;</code></pre>
+<p>look at sequence information</p>
+<pre class="r"><code>seqinfo(mm_gm)</code></pre>
+<pre><code>## Seqinfo object with 66 sequences (1 circular) from mm10 genome:
+##   seqnames       seqlengths isCircular genome
+##   chr1            195471971      FALSE   mm10
+##   chr2            182113224      FALSE   mm10
+##   chr3            160039680      FALSE   mm10
+##   chr4            156508116      FALSE   mm10
+##   chr5            151834684      FALSE   mm10
+##   ...                   ...        ...    ...
+##   chrUn_GL456392      23629      FALSE   mm10
+##   chrUn_GL456393      55711      FALSE   mm10
+##   chrUn_GL456394      24323      FALSE   mm10
+##   chrUn_GL456396      21240      FALSE   mm10
+##   chrUn_JH584304     114452      FALSE   mm10</code></pre>
+<pre class="r"><code>mm_gm$chrM</code></pre>
+<pre><code>##   16299-letter &quot;DNAString&quot; instance
+## seq: GTTAATGTAGCTTAATAACAAAGCAAAGCACTGA...AATCATACTCTATTACGCAATAAACATTAACAA</code></pre>
+<pre class="r"><code>mm_gm[[22]]</code></pre>
+<pre><code>##   16299-letter &quot;DNAString&quot; instance
+## seq: GTTAATGTAGCTTAATAACAAAGCAAAGCACTGA...AATCATACTCTATTACGCAATAAACATTAACAA</code></pre>
+<p>We can use string-matching and alignment functions in Biostrings packages to search BSgenome objects</p>
+<pre class="r"><code>matchPattern(&quot;GGCGCGCC&quot;, mm_gm$chr1)</code></pre>
+<pre><code>##   Views on a 195471971-letter DNAString subject
+## subject: NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN...NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
+## views:
+##           start       end width
+##   [1]   4557138   4557145     8 [GGCGCGCC]
+##   [2]   4567326   4567333     8 [GGCGCGCC]
+##   [3]   6960128   6960135     8 [GGCGCGCC]
+##   [4]   7397441   7397448     8 [GGCGCGCC]
+##   [5]   7398352   7398359     8 [GGCGCGCC]
+##   ...       ...       ...   ... ...
+## [144] 191907520 191907527     8 [GGCGCGCC]
+## [145] 191934164 191934171     8 [GGCGCGCC]
+## [146] 191942448 191942455     8 [GGCGCGCC]
+## [147] 192834335 192834342     8 [GGCGCGCC]
+## [148] 193589224 193589231     8 [GGCGCGCC]</code></pre>
 </div>
-<div id="dbsnp137---importmm10_snp137_chr1_trunc.bed.gz" class="section level1">
-<h1>dbsnp137 &lt;- import(“mm10_snp137_chr1_trunc.bed.gz”)</h1>
+<div id="were-ready-to-extract-promoter-sequences" class="section level3">
+<h3>We’re ready to extract promoter sequences!</h3>
+<p>Remap one chromosome naming scheme to another using both convenience functions and manually check that all sequences are in the BSgenome</p>
+<pre class="r"><code>all(seqlevels(chr1_pcg_3kb_up) %in% seqlevels(mm_gm))#FALSE!</code></pre>
+<pre><code>## [1] FALSE</code></pre>
+<p>Create a test GRange object</p>
+<pre class="r"><code>gr &lt;- GRanges(c(&quot;chr1&quot;, &quot;chr2&quot;), IRanges(start = c(3,4), width = 10))</code></pre>
+<p>access and set the names and levels of sequences</p>
+<pre class="r"><code>seqlevels(gr)</code></pre>
+<pre><code>## [1] &quot;chr1&quot; &quot;chr2&quot;</code></pre>
+<p>change the set sequence levels by providing new level names in the same order as the original seq levels</p>
+<pre class="r"><code>seqlevels(gr) &lt;- c(&quot;1&quot;, &quot;2&quot;)
+seqlevels(gr)</code></pre>
+<pre><code>## [1] &quot;1&quot; &quot;2&quot;</code></pre>
+<p>Use a convenience function from Bioconductor to set style from NCBI to UCSC</p>
+<pre class="r"><code>seqlevelsStyle(chr1_pcg_3kb_up)</code></pre>
+<pre><code>## [1] &quot;NCBI&quot;    &quot;Ensembl&quot; &quot;MSU6&quot;    &quot;AGPvF&quot;</code></pre>
+<pre class="r"><code>seqlevelsStyle(mm_gm)</code></pre>
+<pre><code>## [1] &quot;UCSC&quot;</code></pre>
+<pre class="r"><code>seqlevelsStyle(chr1_pcg_3kb_up) &lt;- &quot;UCSC&quot;</code></pre>
+<p>Re-check that all sequences are in the BSgenome object</p>
+<pre class="r"><code>all(seqlevels(chr1_pcg_3kb_up) %in% seqlevels(mm_gm))#TRUE!</code></pre>
+<pre><code>## [1] TRUE</code></pre>
 </div>
-<div id="use-rtracklayer-to-import-the-mus_musculus.grcm38.75_chr.gtf.gz" class="section level1">
-<h1>Use rtracklayer to import the Mus_musculus.GRCm38.75_chr.gtf.gz</h1>
-<p>mm_gtf &lt;-import(‘Mus_musculus.GRCm38.75_chr1.gtf.gz’) #Reads in metadata columns colnames(mcols(mm_gtf)) ##..</p>
-<div id="retrieving-promoter-regions-of-all-protein-coding-genes" class="section level2">
-<h2>Retrieving Promoter Regions of all protein coding genes</h2>
+<div id="now-we-can-grab-the-sequences-for-particular-regions-kept-in-our-grange-object" class="section level3">
+<h3>Now we can grab the sequences for particular regions kept in our GRange object</h3>
+<p>use the function getseq() that takes a GRange object and returns sequences for each range</p>
+<pre class="r"><code>chr1_3kb_seqs &lt;- getSeq(mm_gm, chr1_pcg_3kb_up)
+chr1_3kb_seqs </code></pre>
+<pre><code>##   A DNAStringSet instance of length 1240
+##        width seq
+##    [1]  3000 ATTCTGAGATGTGGTTACTAGATCAATGGG...CTAGCCGGGCCCAGCGCCCAGCCCCGCGG
+##    [2]  3000 GAAGTGGTATATCTGCCTAGTCTAGGTGTG...GTACTTAATCTGTGAGCACACATGCTAGT
+##    [3]  3000 CTTAAAAACCTAGATATTCTATTTTTTTTT...TGATAACGTCGTGAGCTCGGCTTCCAACA
+##    [4]  3000 GAATTGGCACAGTTTCACATGATTGGTCCA...CGGCCGCTGCAGCGCGACAGGGGCCGGGC
+##    [5]  3000 AAATATAAAGTTAACATACAAAAACTAGTC...GGGCGCGAGCTCGGGGCCGAACGCGAGGA
+##    ...   ... ...
+## [1236]  3000 CAACATGGGTAGTAGTGGGGGAGCTTTAGT...GGGCTGGCCTCACCAAGACGCAACAGGGA
+## [1237]  3000 AGGTGTGTTATATAATAATTGGTTTGACAC...AAAACTTGCTCTCTGGCTTCCTGGCGCCC
+## [1238]  3000 TTGGCCAGGTGATTGATCTTGTCCAACTGG...AGGCCGGGCTATATGCAAACCGAGTTCCC
+## [1239]  3000 GGCATTCCCCTATACTGGGGCATAGAACCT...TAAGGGTCTGCTCCCCACTGCTTACAGCC
+## [1240]  3000 GTAAATTTTCAGGTATATTTCTTTCTACTC...TGATATTTCTGTGGTCCTTATTTCTAGGT</code></pre>
 </div>
+<div id="write-these-sequences-to-a-fasta-file-using-another-convenience-function" class="section level3">
+<h3>write these sequences to a FASTA file using another convenience function</h3>
+<pre class="r"><code>writeXStringSet(chr1_3kb_seqs, file=&quot;mm10_chr1_3kb_promoters.fasta&quot;, format=&quot;fasta&quot;)</code></pre>
+<p>####…..END…. Thanks for the bonus exercise!</p>
 </div>
-<div id="find-the-subset-of-all-protein-coding-genes-in-chr1" class="section level1">
-<h1>find the subset of all protein coding genes in chr1</h1>
-<p>table(mm_gtf<span class="math inline">\(gene_biotype) #subset all genes and biotype protein_coding chr1_pcg &lt;-mm_gtf[mm_gtf\)</span>type==“gene” &amp; mm_gtf$gene_biotype==“protein_coding”] #inspect file summary(width(chr1_pcg)) length(chr1_pcg) #use flank to grab 3kbp upstream of each feature chr1_pcg_3kb_up &lt;- flank(chr1_pcg, width = 3000) #Alternatively, we could use the function “promoters()” from GenomicRanges chr1_pcg_3kb_up2 &lt;- promoters(chr1_pcg, upstream = 3000, downstream = 0) #Let’s check if the two methods produce identicle results identical(chr1_pcg_3kb_up, chr1_pcg_3kb_up2)#Yes! ##…….</p>
-<div id="retrieving-promoter-sequence" class="section level2">
-<h2>Retrieving Promoter Sequence</h2>
-</div>
-</div>
-<div id="use-accessor-functions-to-extract-information-from-bsgenome-packages" class="section level1">
-<h1>Use accessor functions to extract information from BSgenome packages</h1>
-<p>mm_gm &lt;-BSgenome.Mmusculus.UCSC.mm10 organism(mm_gm) providerVersion(mm_gm) provider(mm_gm) #look at sequence information seqinfo(mm_gm) mm_gm<span class="math inline">\(chrM mm_gm[[22]] #We can use string-matching and alignment functions in Biostrings packages to search BSgenome objects matchPattern(&quot;GGCGCGCC&quot;, mm_gm\)</span>chr1) ##..</p>
-</div>
-<div id="were-ready-to-extract-promoter-sequences" class="section level1">
-<h1>We’re ready to extract promoter sequences!</h1>
-</div>
-<div id="remap-one-chromosome-naming-scheme-to-another-using-both-convenience-functions-and-manually" class="section level1">
-<h1>Remap one chromosome naming scheme to another using both convenience functions and manually</h1>
-</div>
-<div id="check-that-all-sequences-are-in-the-bsgenome-object" class="section level1">
-<h1>check that all sequences are in the BSgenome object</h1>
-<p>all(seqlevels(chr1_pcg_3kb_up) %in% seqlevels(mm_gm))#FALSE! #Create a test GRange object gr &lt;- GRanges(c(“chr1”, “chr2”), IRanges(start = c(3,4), width = 10)) #access and set the names and levels of sequences seqlevels(gr) #change the set sequence levels by providing new level names in the same order as the original seq levels seqlevels(gr) &lt;- c(“1”, “2”) seqlevels(gr) #Use a convenience function from Bioconductor to set style from NCBI to UCSC seqlevelsStyle(chr1_pcg_3kb_up) seqlevelsStyle(mm_gm) seqlevelsStyle(chr1_pcg_3kb_up) &lt;- “UCSC” #Re-check that all sequences are in the BSgenome object all(seqlevels(chr1_pcg_3kb_up) %in% seqlevels(mm_gm))#TRUE! ##….</p>
-</div>
-<div id="now-we-can-grab-the-sequences-for-particular-regions-kept-in-our-grange-object" class="section level1">
-<h1>Now we can grab the sequences for particular regions kept in our GRange object</h1>
-</div>
-<div id="use-the-function-getseq-that-takes-a-grange-object-and-returns-sequences-for-each-range" class="section level1">
-<h1>use the function getseq() that takes a GRange object and returns sequences for each range</h1>
-<p>chr1_3kb_seqs &lt;- getSeq(mm_gm, chr1_pcg_3kb_up) chr1_3kb_seqs</p>
-</div>
-<div id="write-these-sequences-to-a-fasta-file-using-another-convenience-function" class="section level1">
-<h1>write these sequences to a FASTA file using another convenience function</h1>
-<p>writeXStringSet(chr1_3kb_seqs, file=“mm10_chr1_3kb_promoters.fasta”, format=“fasta”)</p>
-<p>#####…..END….### #Thanks for the bonus exercise!</p>
 </div>
 
 
@@ -201,7 +362,7 @@ $(document).ready(function () {
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
     document.getElementsByTagName("head")[0].appendChild(script);
   })();
 </script>
