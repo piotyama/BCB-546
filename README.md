@@ -1,5 +1,5 @@
-This repository contains all assignments for spring 2017, Computational Skills for Biologists (BCB546X).
+This repository was created for a spring 2017 calss, Computational Skills for Biologists (BCB 546).
 
-There are four assignments total and each is in a subdirectory named appropriately.
+There are four sub dirs for each assignments.
 
-Each asignment/subdirectory contains a README file for details on how the tasks were executed as well as processed files and in put data (where applicable)
+Each asignment/subdirectory contains a README file.
